@@ -114,6 +114,15 @@ def get_layer_dataset_download_info(layer_id, time=None, root_dir=None, mapper_f
     elif layer_id == "37":
         infix = "decile.%Y%m"
         suffix = ".nc"
+    elif layer_id == "59":
+        infix = "decile.%Y%m_%Y%m"
+        suffix = ".nc"
+    elif layer_id == "58":
+        infix = "decile.%Y%m_%Y%m"
+        suffix = ".nc"
+    elif layer_id == "57":
+        infix = "decile.%Y%m_%Y%m"
+        suffix = ".nc"
     elif layer_id == "35" or layer_id == "39":
         infix = "%Y%m"
         suffix = ".nc"
@@ -167,6 +176,39 @@ def get_layer_dataset_download_info(layer_id, time=None, root_dir=None, mapper_f
 
             # Format
             infix_formatted = f"{first_day.strftime(first_fmt)}_{last_day.strftime(last_fmt)}"
+        elif layer_id == "59":
+            first_fmt, last_fmt = infix.split("_", 1)
+            dt = parse_time_to_naive_utc(time)
+            # First day of current month (used as-is for the first %Y%m)
+            first_day = dt.replace(day=1)
+            # Second %Y%m is 11 months ahead of the first date
+            month_index = first_day.month - 1 + 11
+            ahead = first_day.replace(year=first_day.year + month_index // 12,
+                                      month=month_index % 12 + 1)
+            # Format
+            infix_formatted = f"{first_day.strftime(first_fmt)}_{ahead.strftime(last_fmt)}"
+        elif layer_id == "58":
+            first_fmt, last_fmt = infix.split("_", 1)
+            dt = parse_time_to_naive_utc(time)
+            # First day of current month (used as-is for the first %Y%m)
+            first_day = dt.replace(day=1)
+            # Second %Y%m is 5 months ahead of the first date
+            month_index = first_day.month - 1 + 5
+            ahead = first_day.replace(year=first_day.year + month_index // 12,
+                                      month=month_index % 12 + 1)
+            # Format
+            infix_formatted = f"{first_day.strftime(first_fmt)}_{ahead.strftime(last_fmt)}"
+        elif layer_id == "57":
+            first_fmt, last_fmt = infix.split("_", 1)
+            dt = parse_time_to_naive_utc(time)
+            # First day of current month (used as-is for the first %Y%m)
+            first_day = dt.replace(day=1)
+            # Second %Y%m is 2 months ahead of the first date
+            month_index = first_day.month - 1 + 2
+            ahead = first_day.replace(year=first_day.year + month_index // 12,
+                                      month=month_index % 12 + 1)
+            # Format
+            infix_formatted = f"{first_day.strftime(first_fmt)}_{ahead.strftime(last_fmt)}"
         else:
             dt = parse_time_to_naive_utc(time)
             infix_formatted = dt.strftime(infix)
@@ -215,6 +257,12 @@ def get_layer_dataset_download_info(layer_id, time=None, root_dir=None, mapper_f
         local_directory_path = "{root-dir}/model/regional/noaa/hindcast/3monthly/sst_anomalies"
     if layer_id == "37":
         local_directory_path = "{root-dir}/model/regional/noaa/hindcast/decile/sst_anomalies"
+    if layer_id == "59":
+        local_directory_path = "{root-dir}/model/regional/noaa/hindcast/12monthlyDecile/sst_anomalies"
+    if layer_id == "58":
+        local_directory_path = "{root-dir}/model/regional/noaa/hindcast/6monthlyDecile/sst_anomalies"
+    if layer_id == "57":
+        local_directory_path = "{root-dir}/model/regional/noaa/hindcast/3monthlyDecile/sst_anomalies"
     if layer_id == "47":
         local_directory_path = "{root-dir}/model/regional/noaa/hindcast/trend"
     if layer_id == "2" or layer_id == "10" or layer_id =="11" or layer_id =="12" or layer_id =="14":
@@ -224,7 +272,8 @@ def get_layer_dataset_download_info(layer_id, time=None, root_dir=None, mapper_f
         path = local_directory_path.replace("{root-dir}", root_dir)
     else:
         path = local_directory_path
-
+    print(path)
+    print(file_name)
     return {
         "path": path,
         "file_name": file_name
